@@ -84,7 +84,7 @@
   }
   .welcome::before{
     content:"";position:absolute;inset:0;
-    background:url("assets/poster-loop.jpg") center top/cover no-repeat;
+    background:url("https://cdn.jsdmirror.com/gh/Fu0830/Night-Home@main/assets/poster-loop.jpg") center top/cover no-repeat;
     filter:brightness(.74) saturate(1.2) contrast(1.03);
     transform:scale(1.04);
     animation:drift 32s ease-in-out infinite alternate;
@@ -346,7 +346,7 @@
 <body>
 <main class="stage" id="stage">
   <video id="video" playsinline muted preload="auto"></video>
-  <audio id="bgm" loop preload="auto" src="assets/theme.mp3"></audio>
+  <audio id="bgm" loop preload="auto" src="https://cdn.jsdmirror.com/gh/Fu0830/Night-Home@main/assets/theme.mp3"></audio>
   <div class="aurora"></div>
   <div class="starline" id="starline"></div>
 
@@ -428,14 +428,14 @@
 <script>
 /* ===== 素材 ===== */
 const MEDIA = {
-  opening: "assets/video/opening.mp4",
-  loop:    "assets/video/loop.mp4",
-  ending:  "assets/video/ending.mp4",
-  audio:   "assets/theme.mp3",
+  opening: "https://cdn.jsdmirror.com/gh/Fu0830/Night-Home@main/assets/video/opening.mp4",
+  loop:    "https://cdn.jsdmirror.com/gh/Fu0830/Night-Home@main/assets/video/loop.mp4",
+  ending:  "https://cdn.jsdmirror.com/gh/Fu0830/Night-Home@main/assets/video/ending.mp4",
+  audio:   "https://cdn.jsdmirror.com/gh/Fu0830/Night-Home@main/assets/theme.mp3",
   poster: {
-    opening: "assets/poster-opening.jpg",
-    loop:    "assets/poster-loop.jpg",
-    ending:  "assets/poster-ending.jpg"
+    opening: "https://cdn.jsdmirror.com/gh/Fu0830/Night-Home@main/assets/poster-opening.jpg",
+    loop:    "https://cdn.jsdmirror.com/gh/Fu0830/Night-Home@main/assets/poster-loop.jpg",
+    ending:  "https://cdn.jsdmirror.com/gh/Fu0830/Night-Home@main/assets/poster-ending.jpg"
   }
 };
 
@@ -492,7 +492,7 @@ const CAST = [
     album:["maimai-1.jpg","maimai-2.jpg","maimai-3.jpg"] }
 ];
 
-const ALBUM_BASE = "assets/album/";
+const ALBUM_BASE = "https://cdn.jsdmirror.com/gh/Fu0830/Night-Home@main/assets/album/";
 
 /* ===== DOM ===== */
 const video = document.getElementById('video');
