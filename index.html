@@ -515,18 +515,7 @@ let charAudio, charTimer = null;
 const bgm = document.getElementById('bgm');
 bgm.volume = 0.9;
 
-/* 首次交互解锁音频（iOS / 移动端） */
-let audioUnlocked = false;
-function unlockAudio(){
-  if (audioUnlocked) return;
-  bgm.muted = true;
-  bgm.play().then(()=>{
-    bgm.pause(); bgm.currentTime = 0; bgm.muted = false; audioUnlocked = true;
-  }).catch(()=>{ bgm.muted = false; });
-}
-['pointerdown','touchstart','click'].forEach(ev=>{
-  document.addEventListener(ev, unlockAudio, { passive:true });
-});
+/* 音频在用户点击“回家”时直接播放，失败则由音乐提示按钮兜底 */
 
 /* ===== 星光 ===== */
 (function makeStars(){
