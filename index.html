@@ -1,0 +1,783 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>欢迎小主人回家 · 夜间小屋</title>
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@500;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" />
+<style>
+  :root{
+    --ink:#2a2140;
+    --paper:#fdf8ff;
+    --gold:#ffd9a0;
+    --lilac:#c9b8ff;
+    --ice:#a9e8ff;
+    --rose:#ffc9e0;
+    --glass:rgba(255,255,255,.14);
+    --line:rgba(255,255,255,.28);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;margin:0;}
+  body{
+    background:
+      radial-gradient(120% 80% at 15% 0%, #3b2f6b 0%, transparent 55%),
+      radial-gradient(100% 70% at 90% 20%, #47367a 0%, transparent 50%),
+      radial-gradient(120% 90% at 50% 110%, #1d1a3e 0%, transparent 60%),
+      #14112c;
+    color:#fff;
+    font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+  }
+
+  /* ===== 舞台：9:16 竖屏 ===== */
+  .stage{
+    position:relative;
+    width:min(100vw, calc(100vh * 9 / 16));
+    height:min(100vh, calc(100vw * 16 / 9));
+    background:#0d0b1f;
+    overflow:hidden;
+    box-shadow:0 40px 120px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.08);
+    border-radius:28px;
+    isolation:isolate;
+  }
+  @media (max-width:560px){
+    .stage{width:100vw;height:100dvh;border-radius:0;box-shadow:none;}
+  }
+
+  #video{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;background:#0d0b1f;
+    opacity:0;transition:opacity .9s ease;
+  }
+  #video.on{opacity:1;}
+
+  /* ===== 星光与氛围 ===== */
+  .aurora{
+    position:absolute;inset:0;pointer-events:none;
+    background:
+      radial-gradient(60% 40% at 20% 12%, rgba(201,184,255,.22), transparent 70%),
+      radial-gradient(55% 35% at 82% 78%, rgba(255,201,224,.16), transparent 70%),
+      linear-gradient(180deg, rgba(20,16,44,.45) 0%, rgba(20,16,44,0) 30%, rgba(15,12,33,.55) 100%);
+    mix-blend-mode:screen;
+  }
+  .starline{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+  .spark{
+    position:absolute;width:4px;height:4px;border-radius:50%;
+    background:#fff;box-shadow:0 0 10px rgba(255,236,200,.9);
+    opacity:.5;animation:twinkle 5.5s ease-in-out infinite;
+  }
+  @keyframes twinkle{
+    0%,100%{opacity:.18;transform:scale(.7);}
+    50%{opacity:.85;transform:scale(1.15);}
+  }
+
+  /* ===== 欢迎屏 ===== */
+  .welcome{
+    position:absolute;inset:0;z-index:6;
+    display:flex;flex-direction:column;justify-content:flex-end;
+    padding:0 26px calc(30px + env(safe-area-inset-bottom));
+    transition:opacity .9s ease, transform 1.1s ease;
+    background:
+      radial-gradient(70% 26% at 50% 24%, rgba(255,220,170,.08), transparent 72%),
+      linear-gradient(180deg, rgba(12,9,30,.26) 0%, rgba(12,9,30,.34) 32%, rgba(11,8,26,.72) 52%, rgba(9,7,22,.95) 68%, #080617 90%);
+  }
+  .welcome::before{
+    content:"";position:absolute;inset:0;
+    background:url("assets/poster-loop.jpg") center top/cover no-repeat;
+    filter:brightness(.74) saturate(1.2) contrast(1.03);
+    transform:scale(1.04);
+    animation:drift 32s ease-in-out infinite alternate;
+    z-index:-1;
+  }
+  .welcome::after{
+    content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(70% 26% at 50% 24%, rgba(255,220,170,.10), transparent 72%),
+      linear-gradient(180deg, rgba(12,9,30,.22) 0%, rgba(12,9,30,.34) 32%, rgba(11,8,26,.74) 52%, rgba(9,7,22,.96) 68%, #080617 90%);
+  }
+  .welcome > *{position:relative;z-index:2;}
+  @keyframes drift{
+    from{transform:scale(1.03) translateY(0);}
+    to{transform:scale(1.10) translateY(-10px);}
+  }
+  .welcome.hide{opacity:0;transform:scale(1.04);pointer-events:none;}
+
+  .eyebrow{
+    font-size:11px;letter-spacing:.4em;color:rgba(255,255,255,.62);
+    margin-bottom:14px;text-transform:uppercase;
+  }
+  .welcome h1{
+    font-family:"Noto Serif SC",serif;
+    font-weight:500;
+    font-size:clamp(30px,8.4vw,40px);
+    line-height:1.35;margin:0 0 14px;letter-spacing:.06em;
+    text-shadow:0 6px 30px rgba(255,214,160,.35);
+  }
+  .welcome h1 em{
+    font-style:normal;color:var(--gold);
+  }
+  .welcome p{
+    margin:0 0 28px;font-size:13px;line-height:2;
+    color:rgba(255,255,255,.78);font-weight:300;letter-spacing:.03em;
+    max-width:26em;
+    text-shadow:0 2px 12px rgba(0,0,0,.6);
+  }
+  .enter-row{display:flex;align-items:center;gap:14px;}
+  .enter{
+    position:relative;
+    padding:15px 34px;border:none;border-radius:999px;
+    font-family:"Noto Serif SC",serif;font-size:16px;letter-spacing:.22em;
+    color:#3a2a12;cursor:pointer;
+    background:linear-gradient(135deg,#ffe6bf 0%,#ffd29b 48%,#ffc0a8 100%);
+    box-shadow:0 12px 34px rgba(255,197,142,.42), inset 0 1px 0 rgba(255,255,255,.8);
+    transition:transform .35s ease, box-shadow .35s ease;
+  }
+  .enter:hover{transform:translateY(-2px);box-shadow:0 18px 42px rgba(255,197,142,.55);}
+  .enter:active{transform:translateY(1px) scale(.98);}
+  .hint{font-size:11px;color:rgba(255,255,255,.5);letter-spacing:.12em;line-height:1.9;}
+  .hint b{display:block;font-weight:400;color:rgba(255,255,255,.72);}
+
+  /* ===== 顶部按钮 ===== */
+  .leave{
+    position:absolute;top:calc(16px + env(safe-area-inset-top));right:16px;z-index:5;
+    display:flex;align-items:center;gap:7px;
+    padding:9px 15px;border-radius:999px;
+    border:1px solid var(--line);background:rgba(28,22,54,.42);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    color:rgba(255,255,255,.9);font-size:12px;letter-spacing:.14em;cursor:pointer;
+    transition:opacity .5s ease, transform .3s ease, background .3s ease;
+  }
+  .leave:hover{background:rgba(255,255,255,.18);transform:translateY(-1px);}
+  .leave svg{width:12px;height:12px;opacity:.75;}
+  .leave.hide{opacity:0;pointer-events:none;}
+
+  .sound{
+    position:absolute;top:calc(16px + env(safe-area-inset-top));left:16px;z-index:5;
+    width:38px;height:38px;border-radius:50%;
+    border:1px solid var(--line);background:rgba(28,22,54,.42);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    transition:opacity .5s ease,background .3s ease;
+  }
+  .sound:hover{background:rgba(255,255,255,.18);}
+  .sound.hide{opacity:0;pointer-events:none;}
+  .sound svg{width:16px;height:16px;}
+
+  /* ===== 头顶标注 ===== */
+  .marks{position:absolute;inset:0;z-index:3;pointer-events:none;transition:opacity .6s ease;}
+  .marks.hide{opacity:0;}
+  .marker{
+    position:absolute;pointer-events:auto;cursor:pointer;
+    transform:translate(-50%,-100%);
+    animation:bob 2.9s ease-in-out infinite;
+  }
+  .marker.align-left{transform:translate(0,-100%);}
+  .marker.align-right{transform:translate(-100%,-100%);}
+  @keyframes bob{
+    0%,100%{margin-top:0;}
+    50%{margin-top:-7px;}
+  }
+  .marker-inner{display:flex;flex-direction:column;align-items:center;gap:1px;transition:transform .3s ease;}
+  .marker.align-left .marker-inner{align-items:flex-start;}
+  .marker.align-right .marker-inner{align-items:flex-end;}
+  .marker:hover .marker-inner{transform:translateY(-3px) scale(1.06);}
+  .marker-name{
+    padding:3px 9px;border-radius:999px;white-space:nowrap;
+    font-size:10.5px;letter-spacing:.1em;
+    color:#4a3620;
+    background:linear-gradient(180deg,rgba(255,248,235,.96),rgba(255,232,198,.92));
+    box-shadow:0 4px 14px rgba(90,60,20,.28), inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  .marker-arrow{width:11px;height:11px;display:block;filter:drop-shadow(0 2px 5px rgba(120,80,20,.4));}
+
+  /* ===== 循环场景提示 ===== */
+  .music-tip{
+    position:absolute;left:50%;bottom:calc(76px + env(safe-area-inset-bottom));z-index:5;
+    transform:translateX(-50%);
+    padding:10px 20px;border-radius:999px;cursor:pointer;
+    border:1px solid rgba(255,255,255,.26);background:rgba(24,18,46,.62);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    color:rgba(255,255,255,.9);font-size:11.5px;letter-spacing:.14em;
+    opacity:0;pointer-events:none;transition:opacity .5s ease;
+  }
+  .music-tip.show{opacity:1;pointer-events:auto;}
+  .loop-hint{
+    position:absolute;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));z-index:4;
+    transform:translateX(-50%);white-space:nowrap;
+    padding:9px 18px;border-radius:999px;
+    border:1px solid rgba(255,255,255,.2);background:rgba(24,18,46,.5);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    font-size:11px;letter-spacing:.16em;color:rgba(255,255,255,.76);
+    opacity:0;transition:opacity .6s ease .4s;
+  }
+  .loop-hint.show{opacity:1;}
+
+  /* ===== 角色详情 ===== */
+  .sheet-wrap{
+    position:absolute;inset:0;z-index:7;
+    display:flex;align-items:flex-end;
+    background:rgba(10,8,24,.52);
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    opacity:0;pointer-events:none;transition:opacity .45s ease;
+  }
+  .sheet-wrap.open{opacity:1;pointer-events:auto;}
+  .sheet{
+    width:100%;max-height:82%;
+    border-radius:28px 28px 0 0;
+    border-top:1px solid rgba(255,255,255,.22);
+    background:linear-gradient(180deg, rgba(53,44,88,.96) 0%, rgba(34,28,62,.98) 100%);
+    box-shadow:0 -20px 60px rgba(0,0,0,.45);
+    padding:16px 20px calc(22px + env(safe-area-inset-bottom));
+    transform:translateY(100%);
+    transition:transform .5s cubic-bezier(.2,.9,.25,1);
+    overflow-y:auto;
+  }
+  .sheet-wrap.open .sheet{transform:translateY(0);}
+  .grab{width:42px;height:4px;border-radius:99px;background:rgba(255,255,255,.3);margin:0 auto 16px;}
+  .sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+  .sheet-head h2{
+    font-family:"Noto Serif SC",serif;font-weight:500;font-size:19px;
+    margin:0 0 5px;letter-spacing:.06em;
+  }
+  .sheet-head .role{font-size:11px;letter-spacing:.14em;color:rgba(216,199,255,.8);}
+  .close{
+    flex:none;width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.22);
+    background:rgba(255,255,255,.08);color:#fff;font-size:14px;cursor:pointer;line-height:1;
+  }
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 12px;}
+  .tag{
+    padding:4px 10px;border-radius:999px;font-size:10px;letter-spacing:.1em;
+    color:rgba(255,255,255,.78);border:1px solid rgba(255,255,255,.18);
+    background:rgba(255,255,255,.07);
+  }
+  .intro{
+    font-size:12.5px;line-height:2.05;color:rgba(255,255,255,.78);font-weight:300;
+    margin:0 0 18px;
+  }
+
+  .audio-card{
+    display:flex;align-items:center;gap:12px;
+    padding:12px 14px;border-radius:18px;
+    border:1px solid rgba(255,255,255,.16);
+    background:linear-gradient(135deg, rgba(169,232,255,.1), rgba(255,201,224,.08));
+  }
+  .play{
+    flex:none;width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;
+    background:linear-gradient(135deg,#ffe6bf,#ffcf9e);
+    color:#3a2a12;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 6px 18px rgba(255,200,150,.32);
+  }
+  .play svg{width:13px;height:13px;}
+  .audio-meta{flex:1;min-width:0;}
+  .audio-meta .label{
+    font-size:10px;letter-spacing:.16em;color:rgba(255,255,255,.6);margin-bottom:7px;
+  }
+  .bar{height:3px;border-radius:99px;background:rgba(255,255,255,.16);overflow:hidden;}
+  .bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--ice),var(--rose));transition:width .2s linear;}
+  .time{font-size:10px;color:rgba(255,255,255,.5);margin-top:6px;letter-spacing:.08em;}
+
+  .album-title{
+    display:flex;justify-content:space-between;align-items:baseline;
+    margin:20px 0 10px;font-size:10px;letter-spacing:.2em;color:rgba(255,255,255,.55);
+  }
+  .album{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .album img{
+    width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:14px;cursor:pointer;
+    border:1px solid rgba(255,255,255,.16);
+    transition:transform .35s ease, box-shadow .35s ease;
+  }
+  .album img:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(0,0,0,.35);}
+
+  .sheet-nav{display:flex;justify-content:space-between;margin-top:18px;gap:10px;}
+  .nav-btn{
+    flex:1;padding:10px;border-radius:14px;font-size:11px;letter-spacing:.1em;
+    border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);
+    color:rgba(255,255,255,.8);cursor:pointer;
+  }
+  .nav-btn:hover{background:rgba(255,255,255,.13);}
+
+  /* ===== 结束卡 ===== */
+  .ending-card{
+    position:absolute;inset:0;z-index:8;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    gap:16px;padding:32px;text-align:center;
+    background:linear-gradient(180deg, rgba(16,12,36,.55), rgba(16,12,36,.92));
+    opacity:0;pointer-events:none;transition:opacity 1s ease;
+  }
+  .ending-card.show{opacity:1;pointer-events:auto;}
+  .ending-card h3{
+    font-family:"Noto Serif SC",serif;font-weight:500;font-size:22px;
+    letter-spacing:.1em;margin:0;
+  }
+  .ending-card p{
+    font-size:12px;line-height:2;color:rgba(255,255,255,.66);font-weight:300;margin:0;max-width:24em;
+  }
+  .again{
+    margin-top:6px;padding:12px 26px;border-radius:999px;cursor:pointer;
+    border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);
+    color:#fff;font-size:12px;letter-spacing:.18em;
+    backdrop-filter:blur(12px);
+  }
+  .again:hover{background:rgba(255,255,255,.2);}
+
+  /* ===== 加载 / 放大图 ===== */
+  .loading{
+    position:absolute;inset:0;z-index:9;display:flex;align-items:center;justify-content:center;
+    background:rgba(12,9,28,.75);opacity:0;pointer-events:none;transition:opacity .4s ease;
+  }
+  .loading.show{opacity:1;}
+  .loading span{
+    width:34px;height:34px;border-radius:50%;
+    border:2px solid rgba(255,255,255,.2);border-top-color:var(--gold);
+    animation:spin 1s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .lightbox{
+    position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;
+    padding:24px;background:rgba(6,4,16,.9);
+    opacity:0;pointer-events:none;transition:opacity .35s ease;
+  }
+  .lightbox.show{opacity:1;pointer-events:auto;}
+  .lightbox img{max-width:100%;max-height:100%;border-radius:18px;}
+</style>
+</head>
+<body>
+<main class="stage" id="stage">
+  <video id="video" playsinline muted preload="auto"></video>
+  <audio id="bgm" loop preload="auto" src="assets/theme.mp3"></audio>
+  <div class="aurora"></div>
+  <div class="starline" id="starline"></div>
+
+  <!-- ===== 顶部控制 ===== -->
+  <button class="sound hide" id="sound" aria-label="音乐开关">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+      <path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15 9a4 4 0 0 1 0 6"/><path d="M17.5 6.5a7 7 0 0 1 0 11"/>
+    </svg>
+  </button>
+  <button class="leave hide" id="leave">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <path d="M15 18l-6-6 6-6"/>
+    </svg>
+    离开
+  </button>
+
+  <!-- ===== 头顶标注（仅循环场景） ===== -->
+  <div class="marks hide" id="marks"></div>
+  <button class="music-tip hide" id="musicTip">轻点开启音乐</button>
+  <div class="loop-hint" id="loopHint">轻点名字 · 听听他们今晚的故事</div>
+
+  <!-- ===== 欢迎屏 ===== -->
+  <section class="welcome" id="welcome">
+    <div class="eyebrow">夜间小屋 · 第 11 夜</div>
+    <h1>欢迎小主人<em>回家</em></h1>
+    <p>灯一直亮着，帐篷里的故事会还没散场。<br/>推门进来吧，他们都在等你。</p>
+    <div class="enter-row">
+      <button class="enter" id="enter">回家</button>
+      <div class="hint"><b>轻音乐已备好</b>进门即响 · 循环不息</div>
+    </div>
+  </section>
+
+  <!-- ===== 结束卡 ===== -->
+  <section class="ending-card" id="endingCard">
+    <h3>今夜就到这里</h3>
+    <p>帐篷的灯会为你留一盏。<br/>他们说，明天还想听你讲外面的事。</p>
+    <button class="again" id="again">再回家一次</button>
+  </section>
+
+  <!-- ===== 角色详情面板 ===== -->
+  <div class="sheet-wrap" id="sheetWrap">
+    <div class="sheet" id="sheet">
+      <div class="grab"></div>
+      <div class="sheet-head">
+        <div>
+          <h2 id="cName">名字</h2>
+          <div class="role" id="cRole">身份</div>
+        </div>
+        <button class="close" id="closeSheet">✕</button>
+      </div>
+      <div class="tags" id="cTags"></div>
+      <p class="intro" id="cIntro"></p>
+
+      <div class="audio-card">
+        <button class="play" id="playBtn" aria-label="播放角色片段">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5l12 7-12 7z"/></svg>
+        </button>
+        <div class="audio-meta">
+          <div class="label">TA 的主题片段 · 8 秒</div>
+          <div class="bar"><i id="barFill"></i></div>
+          <div class="time" id="cTime">00:00 / 00:08</div>
+        </div>
+      </div>
+
+      <div class="album-title"><span>相册 · 三张</span><span>轻点放大</span></div>
+      <div class="album" id="cAlbum"></div>
+
+      <div class="sheet-nav">
+        <button class="nav-btn" id="prevChar">上一位</button>
+        <button class="nav-btn" id="nextChar">下一位</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="lightbox" id="lightbox"><img id="lightboxImg" alt="" /></div>
+  <div class="loading" id="loading"><span></span></div>
+</main>
+
+<script>
+/* ===== 素材 ===== */
+const MEDIA = {
+  opening: "assets/video/opening.mp4",
+  loop:    "assets/video/loop.mp4",
+  ending:  "assets/video/ending.mp4",
+  audio:   "assets/theme.mp3",
+  poster: {
+    opening: "assets/poster-opening.jpg",
+    loop:    "assets/poster-loop.jpg",
+    ending:  "assets/poster-ending.jpg"
+  }
+};
+
+/* ===== 角色数据（坐标为画面百分比，仅第三段循环场景使用） ===== */
+const CAST = [
+  { key:"juzi", name:"橘子糖", role:"窗帘上的小监工", x:17.8, y:23.1, offset:0, align:"center",
+    tags:["橘猫","高处","监工"],
+    intro:"我是橘子糖，负责挂在窗帘上监工。小主人一推门，我就从帘子上先探出头来——家里所有的热闹，都得先经过我这一站。",
+    album:["juzi-1.jpg","juzi-2.jpg","juzi-3.jpg"] },
+
+  { key:"lizi", name:"栗子饼", role:"书架上的读书郎", x:80.3, y:33.4, offset:2.2, align:"right",
+    tags:["虎斑","书架","读诗"],
+    intro:"那本翻旧了的诗集归我管。读到喜欢的句子，我会把爪子压在上面，等谁经过，就念给谁听。",
+    album:["lizi-1.jpg","lizi-2.jpg","lizi-3.jpg"] },
+
+  { key:"naitang", name:"奶糖", role:"高处的观察员", x:92.4, y:56.6, offset:4.4, align:"right",
+    tags:["白猫","安静","什么都知道"],
+    intro:"我坐得高，看得远。谁偷偷把小鱼干藏进枕头底下，我都知道——只是我不说。",
+    album:["naitang-1.jpg","naitang-2.jpg","naitang-3.jpg"] },
+
+  { key:"xiaoju", name:"小橘灯", role:"黑板前的小画家", x:4.2, y:66.3, offset:6.6, align:"left",
+    tags:["橘猫","粉笔","画画"],
+    intro:"黑板上那些小鸡小鸭都是我画的。画歪了也没关系，反正大家都会笑，笑起来就好看。",
+    album:["xiaoju-1.jpg","xiaoju-2.jpg","xiaoju-3.jpg"] },
+
+  { key:"huihui", name:"灰灰老师", role:"睡前故事主讲", x:27.2, y:50.0, offset:8.8, align:"center",
+    tags:["大猫","绘本","故事会"],
+    intro:"每晚八点，帐篷里开故事会。我抱着书坐在中间，念到最动人的那一段，会故意放慢一点。",
+    album:["huihui-1.jpg","huihui-2.jpg","huihui-3.jpg"] },
+
+  { key:"zhima", name:"芝麻", role:"黏人的小尾巴", x:42.6, y:68.4, offset:11.0, align:"center",
+    tags:["小猫","最小","黏人"],
+    intro:"我最小，所以总能挤到最里面。灰灰念故事的时候，我把脸埋在他袖口，听着听着就睡着了。",
+    album:["zhima-1.jpg","zhima-2.jpg","zhima-3.jpg"] },
+
+  { key:"tuanzi", name:"团子", role:"会呼吸的靠垫", x:56.7, y:64.1, offset:13.2, align:"center",
+    tags:["奶油狗","软","靠垫"],
+    intro:"我是帐篷里最软的那块靠垫。谁累了就往我身上一倒，我的任务就是不动——一直不动。",
+    album:["tuanzi-1.jpg","tuanzi-2.jpg","tuanzi-3.jpg"] },
+
+  { key:"doudou", name:"豆豆", role:"第一排的小听众", x:29.6, y:76.4, offset:15.4, align:"center",
+    tags:["虎斑","第一排","认真"],
+    intro:"我坐第一排，听故事最认真。但你要是问我刚才讲了什么……我可能只记得月亮那一段。",
+    album:["doudou-1.jpg","doudou-2.jpg","doudou-3.jpg"] },
+
+  { key:"mianhua", name:"棉花糖", role:"写名字的小狗", x:50.8, y:76.7, offset:17.6, align:"center",
+    tags:["白狗","粉色领巾","小卡片"],
+    intro:"粉色领巾是我的标志。我在小卡片上写大家的名字，写完一张，就把它们贴在帐篷的星星下面。",
+    album:["mianhua-1.jpg","mianhua-2.jpg","mianhua-3.jpg"] },
+
+  { key:"maimai", name:"麦麦", role:"削铅笔的那位", x:69.0, y:75.6, offset:19.8, align:"center",
+    tags:["棕狗","彩色铅笔","手艺"],
+    intro:"彩色铅笔都归我削。削得尖尖的，才配得上棉花糖写字的认真劲儿。",
+    album:["maimai-1.jpg","maimai-2.jpg","maimai-3.jpg"] }
+];
+
+const ALBUM_BASE = "assets/album/";
+
+/* ===== DOM ===== */
+const video = document.getElementById('video');
+const welcome = document.getElementById('welcome');
+const marks = document.getElementById('marks');
+const loopHint = document.getElementById('loopHint');
+const leaveBtn = document.getElementById('leave');
+const soundBtn = document.getElementById('sound');
+const endingCard = document.getElementById('endingCard');
+const loading = document.getElementById('loading');
+const sheetWrap = document.getElementById('sheetWrap');
+const lightbox = document.getElementById('lightbox');
+
+/* ===== 状态 ===== */
+let phase = 'welcome';           // welcome | opening | loop | ending
+let currentChar = null;
+let charAudio, charTimer = null;
+
+/* ===== 背景音乐 ===== */
+const bgm = document.getElementById('bgm');
+bgm.volume = 0.9;
+
+/* 首次交互解锁音频（iOS / 移动端） */
+let audioUnlocked = false;
+function unlockAudio(){
+  if (audioUnlocked) return;
+  bgm.muted = true;
+  bgm.play().then(()=>{
+    bgm.pause(); bgm.currentTime = 0; bgm.muted = false; audioUnlocked = true;
+  }).catch(()=>{ bgm.muted = false; });
+}
+['pointerdown','touchstart','click'].forEach(ev=>{
+  document.addEventListener(ev, unlockAudio, { passive:true });
+});
+
+/* ===== 星光 ===== */
+(function makeStars(){
+  const line = document.getElementById('starline');
+  for (let i=0;i<26;i++){
+    const s = document.createElement('div');
+    s.className='spark';
+    s.style.left = (Math.random()*100).toFixed(2)+'%';
+    s.style.top = (Math.random()*100).toFixed(2)+'%';
+    s.style.animationDelay = (Math.random()*5).toFixed(2)+'s';
+    s.style.transform = `scale(${(0.6+Math.random()*0.9).toFixed(2)})`;
+    line.appendChild(s);
+  }
+})();
+
+/* ===== 标注 ===== */
+CAST.forEach((c,i)=>{
+  const el = document.createElement('div');
+  el.className = 'marker' + (c.align==='left'?' align-left':c.align==='right'?' align-right':'');
+  el.style.left = c.x+'%';
+  el.style.top = c.y+'%';
+  el.style.animationDelay = (i*0.18).toFixed(2)+'s';
+  el.dataset.key = c.key;
+  el.innerHTML = `
+    <div class="marker-inner">
+      <span class="marker-name">${c.name}</span>
+      <svg class="marker-arrow" viewBox="0 0 24 24" fill="none" stroke="#7a5220" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 4v14"/><path d="M6.5 12.5 12 18l5.5-5.5"/>
+      </svg>
+    </div>`;
+  el.addEventListener('click', ()=> openSheet(c.key));
+  marks.appendChild(el);
+});
+
+/* ===== 视频控制 ===== */
+function showLoading(on){ loading.classList.toggle('show', on); }
+
+function playClip(kind){
+  return new Promise(resolve=>{
+    video.poster = MEDIA.poster[kind] || '';
+    video.loop = (kind === 'loop');
+    video.src = MEDIA[kind];
+    video.load();
+    video.classList.add('on');
+    showLoading(true);
+    const done = ()=>{ showLoading(false); video.removeEventListener('canplay', done); };
+    video.addEventListener('canplay', done, { once:true });
+    video.play().catch(()=>{ showLoading(false); });
+    resolve();
+  });
+}
+
+video.addEventListener('ended', ()=>{
+  if (phase === 'opening') enterLoop();
+  else if (phase === 'ending') finishHome();
+});
+
+/* ===== 流程 ===== */
+function startHome(){
+  if (phase !== 'welcome' && phase !== 'ending') return;
+  phase = 'opening';
+  welcome.classList.add('hide');
+  endingCard.classList.remove('show');
+  marks.classList.add('hide');
+  loopHint.classList.remove('show');
+  soundBtn.classList.remove('hide');
+  leaveBtn.classList.remove('hide');
+  const p = bgm.play();
+  if (p && p.catch) p.catch(()=>{});
+  setTimeout(()=>{
+    if (bgm.paused && phase === 'opening') document.getElementById('musicTip').classList.add('show');
+  }, 1200);
+  playClip('opening');
+}
+
+function enterLoop(){
+  phase = 'loop';
+  playClip('loop');
+  marks.classList.remove('hide');
+  loopHint.classList.add('show');
+  leaveBtn.classList.remove('hide');
+  setTimeout(()=>loopHint.classList.remove('show'), 6000);
+}
+
+function leaveHome(){
+  if (phase === 'welcome' || phase === 'ending') return;
+  phase = 'ending';
+  closeSheet();
+  marks.classList.add('hide');
+  loopHint.classList.remove('show');
+  leaveBtn.classList.add('hide');
+  playClip('ending');
+}
+
+function finishHome(){
+  phase = 'done';
+  endingCard.classList.add('show');
+  soundBtn.classList.add('hide');
+}
+
+function backToWelcome(){
+  phase = 'welcome';
+  endingCard.classList.remove('show');
+  welcome.classList.remove('hide');
+  video.classList.remove('on');
+  video.removeAttribute('src');
+  video.load();
+  marks.classList.add('hide');
+  soundBtn.classList.add('hide');
+  leaveBtn.classList.add('hide');
+  bgm.pause();
+  stopCharAudio();
+}
+
+/* ===== 角色面板 ===== */
+function openSheet(key){
+  const idx = CAST.findIndex(c=>c.key===key);
+  if (idx < 0) return;
+  currentChar = CAST[idx];
+  renderChar(idx);
+  sheetWrap.classList.add('open');
+  document.getElementById('sheet').scrollTop = 0;
+}
+
+function closeSheet(){
+  sheetWrap.classList.remove('open');
+  stopCharAudio();
+}
+
+function renderChar(idx){
+  const c = CAST[idx];
+  currentChar = c;
+  document.getElementById('cName').textContent = c.name;
+  document.getElementById('cRole').textContent = c.role;
+  document.getElementById('cIntro').textContent = c.intro;
+  document.getElementById('cTags').innerHTML = c.tags.map(t=>`<span class="tag">${t}</span>`).join('');
+
+  const album = document.getElementById('cAlbum');
+  album.innerHTML = '';
+  c.album.forEach((id,i)=>{
+    const img = new Image();
+    img.src = ALBUM_BASE + id;
+    img.alt = `${c.name} 相册 ${i+1}`;
+    img.dataset.full = img.src;
+    img.addEventListener('click', ()=>{
+      document.getElementById('lightboxImg').src = img.dataset.full;
+      lightbox.classList.add('show');
+    });
+    album.appendChild(img);
+  });
+
+  stopCharAudio();
+  document.getElementById('barFill').style.width = '0%';
+  document.getElementById('cTime').textContent = '00:00 / 00:08';
+  setPlayIcon(false);
+}
+
+/* ===== 角色音频片段 ===== */
+function setPlayIcon(playing){
+  document.getElementById('playBtn').innerHTML = playing
+    ? '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="5" width="3.4" height="14" rx="1"/><rect x="13.6" y="5" width="3.4" height="14" rx="1"/></svg>'
+    : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5l12 7-12 7z"/></svg>';
+}
+
+function stopCharAudio(){
+  if (charAudio) { charAudio.pause(); charAudio.currentTime = 0; }
+  if (charTimer) { clearInterval(charTimer); charTimer = null; }
+  if (bgm) bgm.volume = 0.9;
+  setPlayIcon(false);
+}
+
+function fmt(sec){
+  const s = Math.max(0, Math.floor(sec));
+  return '00:' + String(s).padStart(2,'0');
+}
+
+document.getElementById('playBtn').addEventListener('click', ()=>{
+  if (!currentChar) return;
+  if (charAudio && !charAudio.paused) { stopCharAudio(); return; }
+
+  const start = currentChar.offset || 0;
+  if (!charAudio){
+    charAudio = new Audio(MEDIA.audio);
+    charAudio.volume = 0.95;
+    charAudio.preload = 'auto';
+  }
+  charAudio.currentTime = start;
+  charAudio.play().catch(()=>{});
+  setPlayIcon(true);
+  bgm.volume = 0.12;
+
+  if (charTimer) clearInterval(charTimer);
+  charTimer = setInterval(()=>{
+    const t = Math.max(0, charAudio.currentTime - start);
+    if (t >= 8 || charAudio.paused){
+      stopCharAudio();
+      document.getElementById('barFill').style.width = '100%';
+      document.getElementById('cTime').textContent = '00:08 / 00:08';
+      clearInterval(charTimer); charTimer = null;
+      return;
+    }
+    document.getElementById('barFill').style.width = (t/8*100).toFixed(1)+'%';
+    document.getElementById('cTime').textContent = fmt(t)+' / 00:08';
+  }, 200);
+});
+
+/* ===== 事件绑定 ===== */
+document.getElementById('enter').addEventListener('click', startHome);
+leaveBtn.addEventListener('click', leaveHome);
+document.getElementById('again').addEventListener('click', backToWelcome);
+document.getElementById('closeSheet').addEventListener('click', closeSheet);
+sheetWrap.addEventListener('click', e=>{ if (e.target === sheetWrap) closeSheet(); });
+
+document.getElementById('prevChar').addEventListener('click', ()=>{
+  if (!currentChar) return;
+  const i = CAST.findIndex(c=>c.key===currentChar.key);
+  renderChar((i - 1 + CAST.length) % CAST.length);
+});
+document.getElementById('nextChar').addEventListener('click', ()=>{
+  if (!currentChar) return;
+  const i = CAST.findIndex(c=>c.key===currentChar.key);
+  renderChar((i + 1) % CAST.length);
+});
+
+lightbox.addEventListener('click', ()=> lightbox.classList.remove('show'));
+
+/* 音乐开关 */
+soundBtn.addEventListener('click', ()=>{
+  if (bgm.paused) { bgm.play().catch(()=>{}); }
+  else { bgm.pause(); }
+  soundBtn.style.opacity = bgm.paused ? '.5' : '1';
+});
+
+document.getElementById('musicTip').addEventListener('click', ()=>{
+  bgm.muted = false;
+  bgm.volume = 0.9;
+  bgm.play().catch(()=>{});
+  document.getElementById('musicTip').classList.remove('show');
+});
+
+bgm.addEventListener('playing', ()=> document.getElementById('musicTip').classList.remove('show'));
+
+/* 键盘：Esc 关闭 */
+document.addEventListener('keydown', e=>{
+  if (e.key === 'Escape') { closeSheet(); lightbox.classList.remove('show'); }
+});
+
+/* 初始：欢迎屏背景是一帧画面 */
+window.addEventListener('load', ()=>{
+  video.poster = MEDIA.poster.loop;
+});
+</script>
+</body>
+</html>
