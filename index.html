@@ -493,6 +493,7 @@ const CAST = [
 ];
 
 const VOICE_BASE = "https://cdn.jsdmirror.com/gh/Fu0830/Night-Home@main/assets/audio/";
+const VOICE_BACKUP = "https://fu0830.github.io/Night-Home/assets/audio/";
 const ALBUM_BASE = "https://cdn.jsdmirror.com/gh/Fu0830/Night-Home@main/assets/album/";
 
 /* ===== DOM ===== */
@@ -722,6 +723,7 @@ function playVoice(){
   if (a.dataset.key !== currentChar.key){
     a.src = VOICE_BASE + currentChar.voice;
     a.dataset.key = currentChar.key;
+    a.dataset.retried = '0';
   }
   a.currentTime = 0;
   a.play().catch(()=>{});
