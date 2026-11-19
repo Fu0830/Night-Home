@@ -444,52 +444,52 @@ const CAST = [
   { key:"juzi", voice:"zhouzhou.mp3", name:"粥粥", role:"顶尖陪25r", x:17.8, y:23.1, offset:0, align:"center",
     tags:["中路","射手"],
     intro:"小国火舞 小国阿离 中路万花筒",
-    album:["juzi-1.jpg","juzi-2.jpg","juzi-3.jpg","juzi-4.jpg","juzi-5.jpg"] },
+    album:["juzi-4.jpg","juzi-5.jpg"] },
 
   { key:"lizi", voice:"taiyi.mp3", name:"太一", role:"顶尖陪25r", x:80.3, y:33.4, offset:2.2, align:"right",
     tags:["打野"],
     intro:"一万八老虎露娜",
-    album:["lizi-1.jpg","lizi-2.jpg","lizi-3.jpg","lizi-4.jpg"] },
+    album:["lizi-4.jpg"] },
 
   { key:"naitang", voice:"meibao.mp3", name:"妹宝", role:"娱乐陪12r", x:92.4, y:56.6, offset:4.4, align:"right",
     tags:["中路","辅助","射手"],
     intro:"超级活泼 绝不冷场哒",
-    album:["naitang-1.jpg","naitang-2.jpg","naitang-3.jpg"] },
+    album:[] },
 
   { key:"xiaoju", voice:"wutong.mp3", name:"梧桐", role:"娱技20r", x:4.2, y:66.3, offset:6.6, align:"left",
     tags:["射手","打野"],
     intro:"巅峰2300 一万五孙尚香阿离",
-    album:["xiaoju-1.jpg","xiaoju-2.jpg","xiaoju-3.jpg"] },
+    album:[] },
 
   { key:"huihui", voice:"xuxu.mp3", name:"小窝主人:栩栩", role:"小窝毋庸置疑的小主人！", x:27.2, y:50.0, offset:8.8, align:"center",
     tags:["INFP","双鱼座","2.19"],
     intro:"1.双鱼座  生日2.19\n2.情绪价值优先\n3.卡三无\n喜点 1.话多不高冷 抽象一点的\n2.愿意带我刷牌子 给我让人头\n3.被追着打时帮我报仇 被压力时回怼\n4.小窝活跃 \n5.顺风让红蓝 接送我\n雷点1.心态不好的 爱压力人\n2.背刺我 背后蛐蛐我 阴阳怪气我 杀熟我 向我暗示要单或礼物\n3.吵架 混单 假分 开局送节奏 \n4.板类称呼  美女、仙女也不行\n5.不接我的话 让我冷场",
-    album:["huihui-1.jpg","huihui-2.jpg","huihui-3.jpg"] },
+    album:[] },
 
   { key:"zhima", voice:"xiaodaorao.mp3", name:"小打扰", role:"技术陪25r", x:42.6, y:68.4, offset:11.0, align:"center",
     tags:["中路","全能"],
     intro:"巅峰2532 双区巅峰前百 1.88w大乔 七国服 百段中路 二十二法师小国",
-    album:["zhima-1.jpg","zhima-2.jpg","zhima-3.jpg"] },
+    album:[] },
 
   { key:"tuanzi", voice:"huiyi.mp3", name:"回忆", role:"娱技20r", x:56.7, y:64.1, offset:13.2, align:"center",
     tags:["打野","射手"],
     intro:"巅峰2299 一万五敖隐元射",
-    album:["tuanzi-1.jpg","tuanzi-2.jpg","tuanzi-3.jpg"] },
+    album:[] },
 
   { key:"doudou", voice:"diaohe.mp3", name:"调和", role:"顶尖30r", x:29.6, y:76.4, offset:15.4, align:"center",
     tags:["打野","对抗","射手"],
     intro:"巅峰2512 1.88w雅典娜 1.8w澜 1.7国五十云缨 94段对抗",
-    album:["doudou-1.jpg","doudou-2.jpg","doudou-3.jpg"] },
+    album:[] },
 
   { key:"mianhua", voice:"shiyi.mp3", name:"十一", role:"顶尖陪25r", x:50.8, y:76.7, offset:17.6, align:"center",
     tags:["打野","射手"],
     intro:"小国老虎艾琳戈娅龙人 国服苏烈",
-    album:["mianhua-1.jpg","mianhua-2.jpg","mianhua-3.jpg","mianhua-4.jpg","mianhua-5.jpg"] },
+    album:["mianhua-4.jpg","mianhua-5.jpg"] },
 
   { key:"maimai", voice:"bailian.mp3", name:"百炼", role:"技术陪20r", x:69.0, y:75.6, offset:19.8, align:"center",
     tags:["打野","对抗"],
     intro:"浙江省冠军打野 国12橘右京",
-    album:["maimai-1.jpg","maimai-2.jpg","maimai-3.jpg","maimai-4.jpg","maimai-5.jpg","maimai-6.jpg","maimai-7.jpg"] }
+    album:["maimai-4.jpg","maimai-5.jpg","maimai-6.jpg","maimai-7.jpg"] }
 ];
 
 const VOICE_BASE = "https://cdn.jsdmirror.com/gh/Fu0830/Night-Home@main/assets/audio/";
@@ -656,7 +656,10 @@ function renderChar(idx){
   document.getElementById('cIntro').textContent = c.intro;
   document.getElementById('cTags').innerHTML = c.tags.map(t=>`<span class="tag">${t}</span>`).join('');
 
+  const hasAlbum = c.album.length > 0;
   document.getElementById('albumCount').textContent = `相册 · ${c.album.length} 张`;
+  document.querySelector('.album-title').style.display = hasAlbum ? 'flex' : 'none';
+  document.getElementById('cAlbum').style.display = hasAlbum ? 'grid' : 'none';
 
   const album = document.getElementById('cAlbum');
   album.innerHTML = '';
