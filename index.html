@@ -411,7 +411,7 @@
         </div>
       </div>
 
-      <div class="album-title"><span>相册 · 三张</span><span>轻点放大</span></div>
+      <div class="album-title"><span id="albumCount">相册</span><span>轻点放大</span></div>
       <div class="album" id="cAlbum"></div>
 
       <div class="sheet-nav">
@@ -444,12 +444,12 @@ const CAST = [
   { key:"juzi", voice:"zhouzhou.mp3", name:"粥粥", role:"顶尖陪25r", x:17.8, y:23.1, offset:0, align:"center",
     tags:["中路","射手"],
     intro:"小国火舞 小国阿离 中路万花筒",
-    album:["juzi-1.jpg","juzi-2.jpg","juzi-3.jpg"] },
+    album:["juzi-1.jpg","juzi-2.jpg","juzi-3.jpg","juzi-4.jpg","juzi-5.jpg"] },
 
   { key:"lizi", voice:"taiyi.mp3", name:"太一", role:"顶尖陪25r", x:80.3, y:33.4, offset:2.2, align:"right",
     tags:["打野"],
     intro:"一万八老虎露娜",
-    album:["lizi-1.jpg","lizi-2.jpg","lizi-3.jpg"] },
+    album:["lizi-1.jpg","lizi-2.jpg","lizi-3.jpg","lizi-4.jpg"] },
 
   { key:"naitang", voice:"meibao.mp3", name:"妹宝", role:"娱乐陪12r", x:92.4, y:56.6, offset:4.4, align:"right",
     tags:["中路","辅助","射手"],
@@ -484,12 +484,12 @@ const CAST = [
   { key:"mianhua", voice:"shiyi.mp3", name:"十一", role:"顶尖陪25r", x:50.8, y:76.7, offset:17.6, align:"center",
     tags:["打野","射手"],
     intro:"小国老虎艾琳戈娅龙人 国服苏烈",
-    album:["mianhua-1.jpg","mianhua-2.jpg","mianhua-3.jpg"] },
+    album:["mianhua-1.jpg","mianhua-2.jpg","mianhua-3.jpg","mianhua-4.jpg","mianhua-5.jpg"] },
 
   { key:"maimai", voice:"bailian.mp3", name:"百炼", role:"技术陪20r", x:69.0, y:75.6, offset:19.8, align:"center",
     tags:["打野","对抗"],
     intro:"浙江省冠军打野 国12橘右京",
-    album:["maimai-1.jpg","maimai-2.jpg","maimai-3.jpg"] }
+    album:["maimai-1.jpg","maimai-2.jpg","maimai-3.jpg","maimai-4.jpg","maimai-5.jpg","maimai-6.jpg","maimai-7.jpg"] }
 ];
 
 const VOICE_BASE = "https://cdn.jsdmirror.com/gh/Fu0830/Night-Home@main/assets/audio/";
@@ -655,6 +655,8 @@ function renderChar(idx){
   document.getElementById('cRole').textContent = c.role;
   document.getElementById('cIntro').textContent = c.intro;
   document.getElementById('cTags').innerHTML = c.tags.map(t=>`<span class="tag">${t}</span>`).join('');
+
+  document.getElementById('albumCount').textContent = `相册 · ${c.album.length} 张`;
 
   const album = document.getElementById('cAlbum');
   album.innerHTML = '';
