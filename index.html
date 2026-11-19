@@ -683,10 +683,17 @@ function setPlayIcon(playing){
     : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5l12 7-12 7z"/></svg>';
 }
 
+let bgmDucked = false;
+
+function resumeBgm(){
+  if (bgmDucked && bgm){ bgm.volume = 0.9; if (phase !== 'ending' && phase !== 'done') bgm.play().catch(()=>{}); }
+  bgmDucked = false;
+}
+
 function stopCharAudio(){
   if (charAudio) charAudio.pause();
   if (charTimer) { clearInterval(charTimer); charTimer = null; }
-  if (bgm) bgm.volume = 0.9;
+  resumeBgm();
   setPlayIcon(false);
 }
 
@@ -703,7 +710,7 @@ function ensureCharAudio(){
     charAudio.addEventListener('ended', ()=>{
       if (charTimer) { clearInterval(charTimer); charTimer = null; }
       setPlayIcon(false);
-      if (bgm) bgm.volume = 0.9;
+      resumeBgm();
       document.getElementById('barFill').style.width = '100%';
     });
     charAudio.addEventListener('loadedmetadata', ()=>{
@@ -728,7 +735,7 @@ function playVoice(){
   a.currentTime = 0;
   a.play().catch(()=>{});
   setPlayIcon(true);
-  if (bgm) bgm.volume = 0.12;
+  if (bgm && !bgm.paused){ bgm.pause(); bgmDucked = true; }
   if (charTimer) clearInterval(charTimer);
   charTimer = setInterval(()=>{
     const d = a.duration || 0, t = a.currentTime || 0;
